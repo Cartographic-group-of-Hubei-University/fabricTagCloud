@@ -130,6 +130,7 @@ function readJson(jsonFile) {
     for (var i = 0; i < myJsonLength; i++) {
         var city = jsonPOI[i].city;
         if (city != "苏州") continue;
+        if (i == 300) break;
         var pname = jsonPOI[i].pname;
         var X = jsonPOI[i].X_gcj02;
         var Y = jsonPOI[i].Y_gcj02;
