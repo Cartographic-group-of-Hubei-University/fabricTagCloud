@@ -120,7 +120,7 @@ function readJson(jsonFile) {
     xhr.open('GET', jsonFile, false); // 同步请求
     xhr.send();
     var jsonPOI = JSON.parse(xhr.responseText);
-    // console.log(jsonPOI);
+    console.log(jsonPOI);
 
 
     //==========================================================================
@@ -130,20 +130,19 @@ function readJson(jsonFile) {
     for (var i = 0; i < myJsonLength; i++) {
         var city = jsonPOI[i].city;
         if (city != "苏州") continue;
-        if (i == 300) break;
         var pname = jsonPOI[i].pname;
-        var X = jsonPOI[i].X_gcj02;
-        var Y = jsonPOI[i].Y_gcj02;
+        var X_gcj02 = jsonPOI[i].X_gcj02;
+        var Y_gcj02 = jsonPOI[i].Y_gcj02;
         var X_wgs84 = jsonPOI[i].X_wgs84;
         var Y_wgs84 = jsonPOI[i].Y_wgs84;
-        var location = [X, Y];
+        var location = [X_gcj02, Y_gcj02];
         var rankInCity = jsonPOI[i].rankInCity;
         var rankInChina = jsonPOI[i].rankInChina;
         // console.log(pname,X,Y);
         var newJson = {
             "pname": pname,
-            "X": X,
-            "Y": Y,
+            "X_gcj02": X_gcj02,
+            "Y_gcj02": Y_gcj02,
             "X_wgs84": X_wgs84,
             "Y_wgs84": Y_wgs84,
             "lnglat": location,
