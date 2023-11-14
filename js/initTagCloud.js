@@ -8,12 +8,12 @@ function getRegion() {
     var myJsonLen = Object.keys(myJson).length;
     for (var i = 0; i < myJsonLen; i++) {
         // 求绘制的范围
-        var X = myJson[i].X;
-        var Y = myJson[i].Y;
-        if (X < minX) minX = X;
-        if (X > maxX) maxX = X;
-        if (Y < minY) minY = Y;
-        if (Y > maxY) maxY = Y;
+        var tempX = myJson[i].X_gcj02;
+        var tempY = myJson[i].Y_gcj02;
+        if (tempX < minX) minX = tempX;
+        if (tempX > maxX) maxX = tempX;
+        if (tempY < minY) minY = tempY;
+        if (tempY > maxY) maxY = tempY;
     }
 }
 
@@ -22,8 +22,8 @@ function Latlon2ScreenCoordinates() {
     // 要绘制的文本总数
     var myJsonLen = Object.keys(myJson).length;
     for (var i = 0; i < myJsonLen; i++) {
-        var X = myJson[i].X;
-        var Y = myJson[i].Y;
+        var X = myJson[i].X_gcj02;
+        var Y = myJson[i].Y_gcj02;
         var tempX = (X - minX) / (maxX - minX) * canvas.width;
         var tempY = (1 - (Y - minY) / (maxY - minY)) * canvas.height;
 
@@ -33,8 +33,8 @@ function Latlon2ScreenCoordinates() {
         if (tempY > canvas.height - 10) tempY = tempY - 10;
 
         // 转成屏幕坐标进行存储
-        myJson[i].X = tempX;
-        myJson[i].Y = tempY;
+        myJson[i].screenX = tempX;
+        myJson[i].screenY = tempY;
         // console.log(myJson[i].pname, myJson[i].X, myJson[i].Y);
     }
     // 将用户绘制的最中心点 转为屏幕坐标
@@ -96,8 +96,8 @@ function polarCoordinates_Shift(i) {
 
 
     // 计算偏移量
-    var xx = myJson[i].X - originX;
-    var yy = myJson[i].Y - originY;
+    var xx = myJson[i].screenX - originX;
+    var yy = myJson[i].screenY - originY;
     var xie = Math.sqrt(xx * xx + yy * yy);
     xx = xx / xie * 15;
     yy = yy / xie * 15;
@@ -148,13 +148,12 @@ function polarCoordinates_Shift(i) {
 
         if (!isShift) {
             // 不需要偏移了，退出while循环
-            myJson[i].X = newX;
-            myJson[i].Y = newY;
+            myJson[i].newX = newX;
+            myJson[i].newY = newY;
             break;
         }
 
     }
-
 
 }
 
@@ -235,7 +234,7 @@ function mouseInteractive() {
 
             detailsWindow.style.display = "block";
 
-            console.log(myJson);
+            // console.log(myJson);
 
 
 
