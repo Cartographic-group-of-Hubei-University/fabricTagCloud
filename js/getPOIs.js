@@ -120,7 +120,7 @@ function readJson(jsonFile) {
     xhr.open('GET', jsonFile, false); // 同步请求
     xhr.send();
     var jsonPOI = JSON.parse(xhr.responseText);
-    console.log(jsonPOI);
+    // console.log(jsonPOI);
 
 
     //==========================================================================
