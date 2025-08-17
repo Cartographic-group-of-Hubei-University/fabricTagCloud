@@ -1,0 +1,212 @@
+<!-- 支持获取本机IP，再由IP地址获取当前经纬度定位
+在左窗口显示当前经纬度的高德地图，由用户手动绘制圆形区域
+前后端分离，支持通过nodejs筛选PostgreSQL数据库的POI数据
+再由右侧窗口显示POI中心型标签云 -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> 中心型标签云 </title>
+    <meta charset="UTF-8">
+
+    <!-- 高德地图样式 -->
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: 'a45b8fdd549065da27a9395c8d5d87bd',
+        }
+    </script>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <script type="text/javascript"
+        src="https://webapi.amap.com/maps?v=2.0&key=80838eddfb922202b289fd1ad6fa4e58&plugin=AMap.MouseTool,AMap.CircleEditor,AMap.Driving,AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar"></script>
+
+
+    <!-- 引入样式表 -->
+    <link rel="stylesheet" type="text/css" href="../css/styles.css">
+
+    <!-- 引入Jquery -->
+    <script src="./js/jquery.js"></script>
+    <!-- 引入fabric -->
+    <script src="./js/fabric.js"></script>
+
+
+    <!-- 左右窗口拖拽显示 -->
+    <script src="./js/dragControllerDiv.js"></script>
+    <!-- 在左窗口显示高德地图 -->
+    <script src="./js/initAMAP.js"></script>
+    <!-- 获取POI数据 -->
+    <script src="./js/getPOIs.js"></script>
+    <!-- 绘制小地图与比例尺
+    <script src="../js/initLegend.js"></script> -->
+    <!-- 绘制标签云 -->
+    <script src="./js/initTagCloud.js"></script>
+    <!-- 要素详情界面交互 -->
+    <script src="./js/showDetailsWindow.js"></script>
+    <!-- 色带改变交互 -->
+    <script src="./js/changeColor.js"></script>
+    <!-- 色带改变交互 -->
+    <script src="./js/changeFont.js"></script>
+
+
+</head>
+
+<body>
+
+    <!-- 主界面 -->
+    <div class="outside" ref="box">
+        <div class="leftBox" ref="left">
+            <!-- 左窗口 -->
+            <div class="topBox" ref="top">
+                <!-- 上窗口 -->
+                <div id="container"></div>
+                <div class="input-card">
+                    <div class="input-item">
+                        <input id="begin" onclick="begin_circle()" type="button" class="btn" value="开始绘制" />
+                        <input id="finish" onclick="finish_circle()" type="button" class="btn" value="完成绘制" />
+                    </div>
+                </div>
+            </div>
+            <div class="resize2" ref="resize2" title="收缩侧边栏">⋯</div>
+            <div class="bottomBox" ref="bottom">
+                <!-- 下窗口 -->
+                <p>色带选择：</p>
+                <div id="colorSchemes">
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+                <p>字号选择：</p>
+                <div id="changeFontSize">
+                    一级<select name="oneFontSize" id="oneFontSize">
+                    </select>
+                    二级<select name="twoFontSize" id="twoFontSize">
+                    </select>
+                    三级<select name="threeFontSize" id="threeFontSize">
+                    </select>
+                    四级<select name="fourFontSize" id="fourFontSize">
+                    </select>
+                    五级<select name="fiveFontSize" id="fiveFontSize">
+                    </select>
+                </div>
+                <p>字体选择：</p>
+                <div id="changeTypeface">
+                    <select name="typeface" id="typeface">
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Misan">Misan</option>
+                        <option value="宋体">宋体</option>
+                        <option value="仿宋">仿宋</option>
+                        <option value="黑体">黑体</option>
+                        <option value="等线">等线</option>
+                        <option value="微软雅黑">微软雅黑</option>
+                        <option value="楷体">楷体</option>
+                        <option value="隶书">隶书</option>
+                        <option value="幼圆">幼圆</option>
+                        <option value="华文行楷">华文行楷</option>
+                        <option value="华文中宋">华文中宋</option>
+                    </select>
+                </div>
+                <p>字重选择：</p>
+                <div id="changeFontWeight">
+                    <select name="fontWeight" id="fontWeight">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="resize" ref="resize" title="收缩侧边栏">⋮</div>
+        <div class="rightBox" ref="right">
+            <!-- 右窗口 -->
+            <canvas id="myCanvas" width="1900" height="1200"></canvas>
+        </div>
+    </div>
+    <!-- 图例 -->
+    <div id="legend">
+        <p>
+            <font size="5px">与中心的距离</font>
+        </p>
+        <div>
+            <span id="legendColor1" style="background-color: rgb(65,224,208);"></span>
+            <span id="legendColor2" style="background-color: rgb(143,207,193);"></span>
+            <span id="legendColor3" style="background-color: rgb(203,163,151);"></span>
+            <span id="legendColor4" style="background-color: rgb(241,94,87);"></span>
+            <span id="legendColor5" style="background-color: rgb(255,0,0);"></span>
+        </div>
+    </div>
+    <!-- 地点详情窗口 -->
+    <div id="detailsWindow">
+        <div id="title">地点详细信息<span id="closeDetailsWindow">×</span></div>
+        <div id="detailsInformation"></div>
+    </div>
+
+
+
+    <script type="text/javascript">
+
+        // fabric画布
+        canvas = new fabric.Canvas('myCanvas', {
+            backgroundColor: 'rgb(0,0,0)',
+            selectionColor: 'blue',
+            selectionLineWidth: 2,
+            // selection: false, // 禁用组选择
+            crossOrigin: 'anonymous'
+        });
+
+        // 左右窗口拖拽显示
+        dragControllerDiv();
+        // 初始化参数
+        initPara();
+        // 绘制高德地图
+        initAMAP();
+        // 读取json中所有的POI数据
+        readJson("../json/chinapoi.json");
+        // // 读取数据库所有POI
+        // getDBPOIs2();
+
+
+        // 要素详情界面交互
+        detailsWindowInteractive();
+        // 色带初始化
+        initcolorScheme();
+        // 色带改变交互
+        changeColorInteractive();
+        // 字号下拉框初始化
+        initFontSelection();
+        // 字号字体改变交互
+        changeFontInteractive();
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
