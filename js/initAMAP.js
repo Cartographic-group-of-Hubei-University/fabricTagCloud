@@ -110,7 +110,7 @@ function get_location() {
 function initAMAP() {
     //初始化地图对象，加载地图
     map = new AMap.Map("container", {
-        center: [120.585301, 31.301078],
+        center: [114.34, 30.58],  // 初始展示武汉
         zoom: 10,
         viewMode: '3D',
     });

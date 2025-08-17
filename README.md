@@ -74,7 +74,7 @@ npm install -g http-server
 http-server .
 ```
 
-默认运行在 http://localhost:8080，可避免跨域问题，同时更适合开发与调试。
+默认运行在 http://localhost:8080 ，可避免跨域问题，同时更适合开发与调试。
 
 ---
 

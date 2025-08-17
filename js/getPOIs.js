@@ -129,7 +129,7 @@ function readJson(jsonFile) {
     var myJsonLength = Object.keys(jsonPOI).length;
     for (var i = 0; i < myJsonLength; i++) {
         var city = jsonPOI[i].city;
-        if (city != "苏州") continue;
+        // if (city != "苏州") continue;  // 只展示苏州的POI
         var pname = jsonPOI[i].pname;
         var X_gcj02 = jsonPOI[i].X_gcj02;
         var Y_gcj02 = jsonPOI[i].Y_gcj02;
